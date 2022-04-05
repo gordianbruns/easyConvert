@@ -129,3 +129,8 @@ dmypy.json
 .pyre/
 
 .idea
+
+# data files that are too big
+data/char/emnist-byclass-train-images-idx3-ubyte
+data/char/emnist-bymerge-train-images-idx3-ubyte
+data/char/emnist-digits-train-images-idx3-ubyte
