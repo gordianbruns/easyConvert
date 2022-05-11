@@ -1,3 +1,5 @@
+import argparse
+
 from imageProcessing import *
 from ocrAlgorithms import knn, neural_network_classifier
 from emnist import extract_training_samples, extract_test_samples
@@ -8,6 +10,8 @@ import time
 import pytesseract
 
 DEBUG = True
+USE_TESSERACT = False
+USE_ETL = False
 
 if DEBUG:
     import numpy as np
@@ -41,68 +45,85 @@ TRAIN_DATA_CHARS_FILENAME = DATA_DIR + CHAR_DIR + 'emnist-digits-train-images-id
 TRAIN_DATA_CHARS_LABEL = DATA_DIR + CHAR_DIR + 'emnist-digits-train-labels-idx1-ubyte'
 
 
-def run(argv):
-    process_image(argv[0])
+def run(args: argparse.Namespace):
+    # processes image according to specified options
+    process_image(args.filename)
 
-    method = 0  # 0 = neural network
+    method = args.method  # False = neural network; True = k-nearest neighbor
+
+    training_data_type = ""
+    if args.type == 0:
+        training_data_type = "letters"
+    elif args.type == 1:
+        training_data_type = "digits"
 
     print("Training with EMNIST dataset . . .")
-    x_train, y_train = extract_training_samples('letters')
-    x_train = x_train[:5000] if method == 0 else x_train[:5000].astype(str)
-    y_train = y_train[:5000] if method == 0 else y_train[:5000].astype(str)
-    #y_train = y_train.astype(str)
-    #x_train = []
-    #x_buffer = list(x_buffer[:50000:2])
-    #y_train = list(y_train[:50000:2])
-    x_test, y_test = extract_test_samples('letters')
-    x_test = x_test[:40000:400]
-    y_test = y_test[:40000:400]
 
-    '''for image in x_buffer:
-        new_image = Image.fromarray(image)
-        new_image = add_borders(new_image)
-        new_image = np.asarray(new_image)
-        binarized_image = binarize_image(new_image, 1)
-        inverted_image = invert_image(binarized_image)
-        x_train.append(flatten_list(inverted_image))'''
+    # extract training data
+    x_train, y_train = extract_training_samples(training_data_type)
+    # reduce training data to desired size
+    # note that the neural network and the k-nearest neighbor algorithm take different data types
+    x_train = x_train[:args.train_data] if method == 0 else x_train[:args.train_data].astype(str)
+    y_train = y_train[:args.train_data] if method == 0 else y_train[:args.train_data].astype(str)
+    # y_train = y_train.astype(str)
+    # x_train = []
+    # x_buffer = list(x_buffer[:50000:2])
+    # y_train = list(y_train[:50000:2])
+    # extract test data
+    x_test, y_test = extract_test_samples(training_data_type)
+    # reduce test data to 100
+    x_test = x_test[:len(x_test):int(len(x_test) / 100)]
+    y_test = y_test[:len(y_test):int(len(y_test) / 100)]
 
     print("Finished training with EMNIST dataset . . .")
 
-    '''correct_predictions = 0
-    config = r"--psm 10 --oem 3"
+    if USE_TESSERACT:
+        correct_predictions = 0
+        config = r"--psm 10 --oem 3"
 
-    start = time.time()
+        start = time.time()
 
-    for image_index in range(len(x_test)):
-        new_image = Image.fromarray(x_test[image_index])
-        prediction = pytesseract.image_to_string(new_image, config=config)
-        print(prediction)
-        if prediction == y_test[image_index]:
-            correct_predictions += 1
+        for image_index in range(len(x_test)):
+            new_image = Image.fromarray(x_test[image_index])
+            prediction = pytesseract.image_to_string(new_image, config=config)
+            print(prediction)
+            if prediction == y_test[image_index]:
+                correct_predictions += 1
 
-    end = time.time()
+        end = time.time()
 
-    print(f'Accuracy: {(correct_predictions/len(x_test)) * 100}%')'''
+        print(f'Accuracy: {(correct_predictions/len(x_test)) * 100}%')
 
-    '''print("Starting training with ETL dataset . . .")
-    for letter in ALPHABET:
-        print(f"Training {letter} . . .")
-        for image_name in os.listdir(f'extract/{letter}'):
-            f = os.path.join(f'extract/{letter}', image_name)
-            if os.path.isfile(f):
-                image = read_image(f'{f}')
-                binarized_image = binarize_image(image, 1)
-                inverted_image = invert_image(binarized_image)
-                x_train.append(flatten_list(inverted_image))
-                y_train.append(letter)
-    print("Finished training with ETL dataset . . .")'''
+    if USE_ETL:
+        print("Starting training with ETL dataset . . .")
 
-    #if DEBUG and 0 == 1:
+        # convert and preprocess images
+        y_train = y_train.astype(str)
+        for image in list(x_train): #x_buffer:
+            new_image = Image.fromarray(image)
+            new_image = add_borders(new_image)
+            new_image = np.asarray(new_image)
+            binarized_image = binarize_image(new_image, 1)
+            inverted_image = invert_image(binarized_image)
+            x_train.append(simplify_list(list(inverted_image)))
+
+        # train with every letter
+        for letter in ALPHABET:
+            print(f"Training {letter} . . .")
+            for image_name in os.listdir(f'extract/{letter}'):
+                f = os.path.join(f'extract/{letter}', image_name)
+                if os.path.isfile(f):
+                    image = read_image(f'{f}')
+                    binarized_image = binarize_image(image, 1)
+                    inverted_image = invert_image(binarized_image)
+                    x_train.append(simplify_list(list(inverted_image)))
+                    y_train.append(letter)
+        print("Finished training with ETL dataset . . .")
+
+    if args.debug:
         # Write some images out just so we can see them visually.
-     #   for idx, test_sample in enumerate(x_test):
-      #      write_image(test_sample, f'{TEST_DIR}{idx}.png')
-        #x_test = [read_image(f'{DATA_DIR}our_test.png')]
-        #y_test = [7]
+        for idx, test_sample in enumerate(x_test):
+            write_image(test_sample, f'{TEST_DIR}{idx}.png')
 
     '''print("----------------------------------------")
 
