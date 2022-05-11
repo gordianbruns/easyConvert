@@ -12,3 +12,4 @@ def bytes_to_char(byte_data: bytes) -> str:
     string = chr(integer + 64)
 
     return string
+

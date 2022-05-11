@@ -1,5 +1,6 @@
 from helpers.imageProcessingHelpers import *
 
+
 SHOW_CONTOURS = True
 SHOW_HISTOGRAMS = False
 SHOW_IMAGES = False
@@ -131,6 +132,7 @@ def grayscale(image: np.ndarray) -> np.ndarray:
 # function to binarize image
 def binarize_image(gray_image: np.ndarray, method: int) -> np.ndarray:
     # method 0 uses an adaptive algorithm while method 1 uses a static algorithm
+
     if method == 0:
         thresh = cv2.adaptiveThreshold(gray_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
     else:
@@ -187,6 +189,7 @@ def get_skew_angle(image: np.ndarray) -> float:
     # prepare image, copy, convert to gray scale, blur, and threshold
     new_image = image.copy()
     gray = cv2.cvtColor(new_image, cv2.COLOR_BGR2GRAY)
+
     blur = cv2.GaussianBlur(gray, (9, 9), 0)
     thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
@@ -285,6 +288,7 @@ def read_images(filename: str, n_max_images: int = None) -> list:
         _ = f.read(4)  # type of file; can be ignored since known
         num_images = bytes_to_int(f.read(4))
         # reduce to max num of images
+
         if n_max_images:
             num_images = n_max_images
         num_rows = bytes_to_int(f.read(4))
