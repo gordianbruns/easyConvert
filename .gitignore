@@ -134,3 +134,7 @@ dmypy.json
 data/char/emnist-byclass-train-images-idx3-ubyte
 data/char/emnist-bymerge-train-images-idx3-ubyte
 data/char/emnist-digits-train-images-idx3-ubyte
+data/char/emnist-letters-train-images-idx3-ubyte
+data/char/emnist-balanced-train-images-idx3-ubyte
+data/char/emnist-byclass-test-images-idx3-ubyte
+data/char/emnist-bymerge-test-images-idx3-ubyte
