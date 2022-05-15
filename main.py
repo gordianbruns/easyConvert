@@ -5,7 +5,7 @@ import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", type=str, help="Filename of the image")
-    parser.add_argument("train_data", type=int, help="Number of training data")
+    parser.add_argument("train_data_num", type=int, help="Number of training data to use")
     parser.add_argument("-t", "--type", type=int, help="Choose type of data (0: letters (default), 1: digits, 2: mixed)",
                         choices={0, 1, 2}, default=0)
     parser.add_argument("-d", "--debug", help="DEBUG mode on", action="store_true")

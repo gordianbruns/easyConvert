@@ -1,10 +1,6 @@
+import argparse
+
 from helpers.imageProcessingHelpers import *
-
-
-SHOW_CONTOURS = True
-SHOW_HISTOGRAMS = False
-SHOW_IMAGES = False
-SHOW_SELECTION = False
 
 
 # debug function: shows image at specific path
@@ -39,18 +35,28 @@ def display_image(image_path: str):
 
 
 # main image processing function
-def process_image(input_image: str):
+def process_image(args: argparse.Namespace):
     print("processing image. . .")
+
+    # initialize variables based on parameters
+    input_image = args.filename
+    SHOW_CONTOURS = args.contours
+    SHOW_HISTOGRAMS = args.histogram
+    SHOW_IMAGES = args.filters
+    SHOW_SELECTION = args.selection
 
     # read in image
     image = cv2.imread(input_image)
     if image is None:
         raise FileNotFoundError(f'Image at path {input_image} not found.')
 
+    # if it should create an image that shows the contours
     if SHOW_CONTOURS:
         get_contours(image)
 
+    # if it should show a histogram that shows how many black and white pixels are in the image horizontally
     if SHOW_HISTOGRAMS:
+        # preprocessing
         inverted = invert_image(image)
         gray_image = grayscale(inverted)
         bw_im = binarize_image(gray_image, 1)
@@ -60,28 +66,37 @@ def process_image(input_image: str):
         hist = []
         indices = [i for i in range(len(no_noise))]
 
+        # create histogram
         for item in no_noise:
             normalized_item = [x / 255 for x in item]
             hist.append(sum(normalized_item))
 
+        # show histogram
         plt.barh(indices, hist)
         plt.show()
 
+    # show different images of the preprocessing steps
     if SHOW_IMAGES:
+        # show original image
         display_image(input_image)
+        # show inverted image
         invert_image(image)
         display_image("images/inverted.jpg")
 
+        # show the effect of grayscaling
         gray_image = grayscale(image)
         cv2.imwrite("images/gray.jpg", gray_image)
 
+        # show the effect of binarization
         bw_im = binarize_image(gray_image, 0)
         display_image("images/bw_image.jpg")
 
+        # show the effect of noise removal
         no_noise = noise_removal(bw_im)
         cv2.imwrite("images/no_noise.jpg", no_noise)
         display_image("images/no_noise.jpg")
 
+        # show the effect of making the font thinner and thicker
         thin_image = thin_font(no_noise)
         thick_image = thick_font(no_noise)
         cv2.imwrite("images/eroded_image.jpg", thin_image)
@@ -89,28 +104,34 @@ def process_image(input_image: str):
         display_image("images/eroded_image.jpg")
         display_image("images/dilated_image.jpg")
 
+        # show original rotated image
         new = cv2.imread("images/example_rotated.png")
         display_image("images/example_rotated.png")
+        # deskew image and show it
         fixed = deskew(new)
         cv2.imwrite("images/rotated_fixed.jpg", fixed)
         display_image("images/rotated_fixed.jpg")
 
-        image_with_border = add_borders(no_noise)
-        cv2.imwrite("images/image_with_border.jpg", image_with_border)
-        display_image("images/image_with_border.jpg")
-
+    # show a selection of different binarization parameters and algorithms
     if SHOW_SELECTION:
+        # images
         images1 = [image] + binarize_image_selection(grayscale(image))[0]
         images2 = [image] + binarize_image_selection(grayscale(image))[1]
+
+        # labels
         titles1 = ['Original Image', 'Global Thresholding (v = 127)', 'Adaptive Mean Thresholding',
                    'Adaptive Mean Thresholding (10)']
         titles2 = ['Original Image', 'Adaptive Mean Thresholding', 'Adaptive Gaussian Thresholding',
                    'Adaptive Gaussian Thresholding(10)']
+
+        # show the first four images
         for i in range(len(images1)):
             plt.subplot(2, 2, i + 1), plt.imshow(images1[i], 'gray')
             plt.title(titles1[i])
             plt.xticks([]), plt.yticks([])
         plt.show()
+
+        # show the second four images
         for i in range(len(images2)):
             plt.subplot(2, 2, i + 1), plt.imshow(images2[i], 'gray')
             plt.title(titles2[i])
@@ -258,7 +279,8 @@ def add_borders(image: Image) -> Image:
     old_size = image.size   # remember old size
 
     # create new image with normalized size
-    new_size = (64, 63)
+    #new_size = (64, 63)
+    new_size = (28, 28)
     new_im = Image.new(mode="RGB", size=new_size, color="white")
     # paste image into the middle of the new image
     new_im.paste(image, ((new_size[0] - old_size[0]) // 2, (new_size[1] - old_size[1]) // 2))

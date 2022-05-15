@@ -13,7 +13,7 @@ def dist(x: list, y: list) -> float:
 
 
 # helper function: get distances to classified neighbors
-def get_training_distances(test_sample: list, x_train: np.ndarray) -> list:
+def get_training_distances(test_sample: list, x_train: list) -> list:
     return [dist(simplify_list(train_sample), simplify_list(test_sample)) for train_sample in x_train]
 
 

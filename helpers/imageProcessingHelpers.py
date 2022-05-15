@@ -14,10 +14,12 @@ def simplify_list(l: list):
         if type(l[0]) is np.uint8:
             return l
         # if list is one dimensional and saves all rgb values as sublists
-        elif type(l[0]) is list and len(l[0]) == 3:
+        elif type(l[0]) is list or type(l[0]) is np.ndarray and len(l[0]) == 3:
             # uses only the red value of each pixel; note that the red, blue, and green value are all the same due to
             # binarization
             return [element[0] for element in l]
+        #elif type(l[0]) is list and len(l[0]) == 64:
+         #   return [element[0] for row in l for element in row]
         else:
             return [pixel for element in l for pixel in element]
     # only for debugging in case new data has a different shape

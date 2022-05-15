@@ -2,7 +2,7 @@ from helpers.algorithmHelpers import *
 
 
 # k-nearest neighbor algorithm
-def knn(x_train: np.ndarray, y_train: np.ndarray, x_test: list, k: int = 3) -> list:
+def knn(x_train: list, y_train: np.ndarray, x_test: list, k: int = 3) -> list:
     y_prediction = []  # store predictions
     count = 0  # used to keep track of how many characters have been classified
 
@@ -64,8 +64,8 @@ def neural_network_classifier(x_train: np.ndarray, y_train: np.ndarray, x_test: 
 
     # measures performance of model
     accuracy, loss = model.evaluate(x_test, y_test)
-    print(accuracy)
-    print(loss)
+    print("Accuracy:", accuracy)
+    print("Loss:", loss)
 
     # save the model
     model.save('model')
