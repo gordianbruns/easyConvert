@@ -63,7 +63,7 @@ def neural_network_classifier(x_train: np.ndarray, y_train: np.ndarray, x_test: 
     model.fit(x_train, y_train, epochs=n_epochs)
 
     # measures performance of model
-    accuracy, loss = model.evaluate(x_test, y_test)
+    loss, accuracy = model.evaluate(x_test, y_test)
     print("Accuracy:", accuracy)
     print("Loss:", loss)
 

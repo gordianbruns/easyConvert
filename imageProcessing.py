@@ -237,7 +237,7 @@ def get_skew_angle(image: np.ndarray) -> float:
 
 
 # function to rotate the image around its center
-def rotateImage(image: np.ndarray, angle: float) -> np.ndarray:
+def rotate_image(image: np.ndarray, angle: float) -> np.ndarray:
     # copy image
     new_image = image.copy()
     # get height and width of image
@@ -257,7 +257,7 @@ def rotateImage(image: np.ndarray, angle: float) -> np.ndarray:
 def deskew(image: np.ndarray) -> np.ndarray:
     angle = get_skew_angle(image)
 
-    return rotateImage(image, -1.0 * angle)
+    return rotate_image(image, -1.0 * angle)
 
 
 # function to remove borders around paper
@@ -279,7 +279,6 @@ def add_borders(image: Image) -> Image:
     old_size = image.size   # remember old size
 
     # create new image with normalized size
-    #new_size = (64, 63)
     new_size = (28, 28)
     new_im = Image.new(mode="RGB", size=new_size, color="white")
     # paste image into the middle of the new image

@@ -47,6 +47,10 @@ TRAIN_DATA_CHARS_LABEL = DATA_DIR + CHAR_DIR + 'emnist-digits-train-labels-idx1-
 
 # main driver function
 def run(args: argparse.Namespace):
+    # raise error if we get 0 or negative training data
+    if args.train_data_num < 1:
+        raise ValueError("You must enter more than 0 training data")
+
     # processes image according to specified options
     process_image(args)
 
