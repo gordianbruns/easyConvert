@@ -24,12 +24,19 @@ II. Additional Folders
 
 III. Usage
 
+Before running the program, the requirements must be installed first.  
+That can be done using the following command:  
+
+pip install -r requirements.txt
+
+EasyConvert assumes that python 3.X is installed.
+
 The program takes two mandatory command line arguments:
  - filename
  - train_data_num
 
 Depending on which algorithm is selected, slightly different things happen:
- - K-nearest neighbor algorithm: It processes the image and interprets the image then to convert the writing in it to typed text. After that, the program runs a test of the algorithm with 100 images to check the accuracy.
+ - K-nearest neighbor algorithm: It processes the image and interprets the image to convert the writing in it to typed text. After that, the program runs a test of the algorithm with 100 images to check the accuracy.
  - Neural Network: It processes the image the same way but does not interpret the writing in it. The program then trains the neural network, and it will show the accuracy of the model.
 In general, if only digits are selected for training, then the program will not interpret the image.
 
