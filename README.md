@@ -27,7 +27,7 @@ III. Usage
 Before running the program, the requirements must be installed first.  
 That can be done using the following command:  
 
-pip install -r requirements.txt
+```pip install -r requirements.txt```
 
 EasyConvert assumes that python 3.X is installed.
 
@@ -42,12 +42,11 @@ In general, if only digits are selected for training, then the program will not 
 
 For example, if you want to run the program on the hello world example that is provided, using the k-nearest neighbor algorithm with 5,000 training samples, then you must enter the following into the command line:  
 
-python main.py -m images/hello_world.jpg 5000
-
+```python main.py -m images/hello_world.jpg 5000```
 
 The general usage is:
 
-python main.py [-h] [-t {0,1,2}] [-d] [-m] [-c] [-hi] [-f] [-s] filename train_data_num
+```python main.py [-h] [-t {0,1,2}] [-d] [-m] [-c] [-hi] [-f] [-s] filename train_data_num```
 
 positional arguments:
  - filename # Filename of the image 

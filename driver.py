@@ -1,5 +1,3 @@
-import argparse
-
 from imageProcessing import *
 from ocrAlgorithms import knn, neural_network_classifier
 from emnist import extract_training_samples, extract_test_samples
