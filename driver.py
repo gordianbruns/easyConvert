@@ -61,8 +61,14 @@ def run(args: argparse.Namespace):
     training_data_type = ''
     if args.type == 0:
         training_data_type = 'letters'
+        # cap training data at maximum
+        if args.train_data_num > 145600:
+            args.train_data_num = 145600
     elif args.type == 1:
         training_data_type = 'digits'
+        # cap training data at maximum
+        if args.train_data_num > 280000:
+            args.train_data_num = 280000
     elif args.type == 2:
         training_data_type = 'letters'
         mixed = True
